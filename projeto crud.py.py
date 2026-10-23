@@ -1,3 +1,7 @@
+import sqlite3
+conexao = sqlite3.connect("estoque.db")
+cursor = conexao.cursor()
+
 produtos = []
 while True:
     print(''' 
@@ -11,15 +15,20 @@ while True:
         nome = (input('Digite o nome do produto: ')).upper().strip()
         preco = float(input('Digite o preco do produto: '))
         quantidade = int(input('Digite a quantidade de produtos: '))
+        cursor.execute(' INSERT INTO produtos (nome, preco, quantidade) VALUES (?, ?, ?)', (nome, preco, quantidade))
+        conexao.commit()
         produto = {'nome': nome,
                    'preco': preco,
                    'quantidade': quantidade}
         produtos.append(produto)
         print('Produto cadastrado com sucesso!')
     elif escolha == 2:
-        if len(produtos) > 0:
-            for produto in produtos:
-                print(f'nome: {produto['nome']}, preco: {produto['preco']}, quantidade: {produto['quantidade']}')
+        cursor.execute('SELECT * FROM produtos')
+        registros = cursor.fetchall()
+
+        if registros:
+             for registro in registros:
+                  print(registro)        
         else:
             print('Nenhum produto cadastrado!') 
     elif escolha == 3:
@@ -28,49 +37,58 @@ while True:
         2 - PRECO 
         3 - QUANTIDADE''')
         opcao = int(input('Digite a opcao desejada: '))
+        
         if opcao == 1:
-            nome_atual = input('Digite o nome do produto que deseja atualizar: ').upper().strip()
-            encontrado = False
-            for produto in produtos:
-                if produto['nome'] == nome_atual:
-                    encontrado = True
-                    novo_nome = input('Digite o novo nome do produto: ').upper().strip()
-                    produto['nome'] = novo_nome
-                    print('nome do produto foi atualizado com sucesso!!')
-            if not encontrado:
-                    print('Produto nao encontrado!')
+            nome_atual = input('Digite o nome do produto que deseja alterar: ').upper().strip()
+
+            cursor.execute('SELECT id FROM produtos WHERE nome = ? COLLATE NOCASE', (nome_atual,))
+            produto = cursor.fetchone()
+            if produto:
+                novo_nome = input('Digite o novo nome do produto: ').upper().strip()
+                cursor.execute('UPDATE produtos SET nome = ? WHERE id = ?', (novo_nome, produto[0]))
+                conexao.commit()
+                print('Nome atualizado com sucesso! ( nome antigo : {} / nome novo : {} )'.format(nome_atual, novo_nome))
+            else:
+                print('Produto nao encontrado...')
         elif opcao == 2:
             nome_atual = input('Digite o nome do produto que deseja alterar o preco: ').upper().strip()
-            encontrado = False
-            for produto in produtos:
-                if produto['nome'] == nome_atual:
-                    encontrado = True
-                    novo_preco = float(input('Digite o novo preco do produto: '))
-                    produto['preco'] = novo_preco
-                    print('Preco do produto foi atualizado com sucesso!!')
-            if not encontrado:
-                    print('Produto nao encontrado!')
+            cursor.execute('SELECT id, preco FROM produtos WHERE nome = ? COLLATE NOCASE', (nome_atual,))
+            produto = cursor.fetchone()
+            
+            if produto:
+                preco_antigo = produto[1]
+                novo_preco = float(input('Digite o novo preco do produto:'))
+                cursor.execute('UPDATE produtos SET preco = ? WHERE id = ?', (novo_preco, produto[0]))
+               
+                conexao.commit()
+                print('Preco atualizado com sucesso! ( preco antigo : {} / preco novo : {} )'.format(preco_antigo, novo_preco))
+            else:
+                print('Produto nao encontrado...')
+
         elif opcao == 3:
              nome_atual = input('Digite o nome do produto que deseja alterar a quantidade: ').upper().strip()
-             encontrado = False
-             for produto in produtos:
-                  if produto['nome'] == nome_atual:
-                       encontrado = True
-                       nova_quantidade = int(input('Digite a nova quantidade do produto: '))
-                       produto['quantidade'] = nova_quantidade
-                       print('Quantidade do produto foi atualizada com sucesso!!')
-             if not encontrado:
-                    print('Produto nao encontrado!')
+             cursor.execute('SELECT id, quantidade FROM produtos WHERE nome = ? COLLATE NOCASE', (nome_atual,))
+             produto = cursor.fetchone()
+             if produto:
+                 quantidade_antiga = produto[1]
+                 nova_quantidade = int(input('Digite a nova quantidade do produto: '))
+                 cursor.execute('UPDATE produtos SET quantidade = ? WHERE id = ?', (nova_quantidade, produto[0]))
+                 conexao.commit()
+                 print('Quantidade atualizada com sucesso! ( quantidade antiga : {} / quantidade nova : {} )'.format(quantidade_antiga, nova_quantidade))
+
+                  
+             else:
+                  print('Produto nao registrado!')
+            
     elif escolha == 4:
-        nome_atual = input('Digite o nome do produto que deseja deletar: ').upper().strip()
-        encontrado = False
-        for produto in produtos:
-              if produto['nome'] == nome_atual:
-                   encontrado = True
-                   produtos.remove(produto)
-                   print('Produto deletado com sucesso!!')
-        if not encontrado:
+        nome_atual = input('Digite o nome do produto que deseja deletar: ').strip()
+        cursor.execute('DELETE FROM produtos WHERE nome = ? COLLATE NOCASE',(nome_atual,))
+        conexao.commit()
+        if cursor.rowcount > 0:
+            print('Produto deletado com sucesso!!')
+        else:
             print('Produto nao encontrado!')
+    
     elif escolha == 5:
         print('Saindo do programa...')
         break
