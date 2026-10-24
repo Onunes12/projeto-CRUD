@@ -5,7 +5,7 @@ cursor = conexao.cursor()
 produtos = []
 while True:
     print(''' 
- 1 - CADASTRAR PROODUTO
+ 1 - CADASTRAR PRODUTO
  2 - CONSULTAR PRODUTO
  3 - ATUALIZAR PRODUTO
  4 - DELETAR PRODUTO
@@ -13,13 +13,33 @@ while True:
     escolha = int(input('Digite a opcao desejada: '))
     if escolha == 1:
         nome = (input('Digite o nome do produto: ')).upper().strip()
-        preco = float(input('Digite o preco do produto: '))
-        quantidade = int(input('Digite a quantidade de produtos: '))
+        while not nome:
+            nome = (input('O nome do produto nao pode ser vazio! Digite novamente: ')).upper().strip()
+        
+        while True:
+            try:
+                preco = float(input('Digite o valor do produto!: '))
+                if preco > 0:
+                    break
+                else:
+                    print('O preco do produto precisa ser maior que zero')
+            except ValueError:
+                print('Valor invalido! Digite um numero valido para o preco do produto (exemplo: 29.90)')
+        
+        while True:
+            try:
+                quantidade = int(input('Digite a quantidade de produtos que deseja cadastrar! : '))
+                if quantidade >= 0:
+                    break
+                else:
+                    print('O produto precisa ser positiva para ser cadastrada!!')
+            except ValueError:
+                print('Quantidade invalida! Digite um numero valido(exemplo : 10/20/30)')
         cursor.execute(' INSERT INTO produtos (nome, preco, quantidade) VALUES (?, ?, ?)', (nome, preco, quantidade))
         conexao.commit()
         produto = {'nome': nome,
-                   'preco': preco,
-                   'quantidade': quantidade}
+            'preco': preco,
+            'quantidade': quantidade}
         produtos.append(produto)
         print('Produto cadastrado com sucesso!')
     elif escolha == 2:
@@ -75,8 +95,7 @@ while True:
                  cursor.execute('UPDATE produtos SET quantidade = ? WHERE id = ?', (nova_quantidade, produto[0]))
                  conexao.commit()
                  print('Quantidade atualizada com sucesso! ( quantidade antiga : {} / quantidade nova : {} )'.format(quantidade_antiga, nova_quantidade))
-
-                  
+    
              else:
                   print('Produto nao registrado!')
             
@@ -92,3 +111,6 @@ while True:
     elif escolha == 5:
         print('Saindo do programa...')
         break
+    elif escolha < 1 or escolha > 5:
+        print('Opcao invalida!')
+
