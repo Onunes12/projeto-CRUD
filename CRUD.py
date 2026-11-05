@@ -43,12 +43,15 @@ while True:
         produtos.append(produto)
         print('Produto cadastrado com sucesso!')
     elif escolha == 2:
-        cursor.execute('SELECT * FROM produtos')
+        cursor.execute('SELECT nome, preco, quantidade FROM produtos')
         registros = cursor.fetchall()
 
         if registros:
-             for registro in registros:
-                  print(registro)        
+             for nome, preco, quantidade in registros:
+                  print(f'Produto: {nome}')
+                  print(f'Preco: R$ {preco:.2f}')
+                  print(f'Quantidade: {quantidade}')
+                  print('---------------------------------')
         else:
             print('Nenhum produto cadastrado!') 
     elif escolha == 3:
@@ -60,24 +63,30 @@ while True:
         
         if opcao == 1:
             nome_atual = input('Digite o nome do produto que deseja alterar: ').upper().strip()
-
             cursor.execute('SELECT id FROM produtos WHERE nome = ? COLLATE NOCASE', (nome_atual,))
             produto = cursor.fetchone()
             if produto:
                 novo_nome = input('Digite o novo nome do produto: ').upper().strip()
+                while not novo_nome:
+                    novo_nome = input('Digite o novo nome do produto novamente, nao pode ser algo vazio!!:').strip().upper()
                 cursor.execute('UPDATE produtos SET nome = ? WHERE id = ?', (novo_nome, produto[0]))
                 conexao.commit()
                 print('Nome atualizado com sucesso! ( nome antigo : {} / nome novo : {} )'.format(nome_atual, novo_nome))
             else:
                 print('Produto nao encontrado...')
-        elif opcao == 2:
             nome_atual = input('Digite o nome do produto que deseja alterar o preco: ').upper().strip()
             cursor.execute('SELECT id, preco FROM produtos WHERE nome = ? COLLATE NOCASE', (nome_atual,))
             produto = cursor.fetchone()
             
-            if produto:
+            
+            
+            
+            while not preco_novo:
                 preco_antigo = produto[1]
                 novo_preco = float(input('Digite o novo preco do produto:'))
+                while 
+                    novo_preco = input('Digite o preco novamente! :')
+
                 cursor.execute('UPDATE produtos SET preco = ? WHERE id = ?', (novo_preco, produto[0]))
                
                 conexao.commit()
@@ -85,6 +94,11 @@ while True:
             else:
                 print('Produto nao encontrado...')
 
+        
+        
+        
+        
+        
         elif opcao == 3:
              nome_atual = input('Digite o nome do produto que deseja alterar a quantidade: ').upper().strip()
              cursor.execute('SELECT id, quantidade FROM produtos WHERE nome = ? COLLATE NOCASE', (nome_atual,))
