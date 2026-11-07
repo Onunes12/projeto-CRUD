@@ -8,7 +8,7 @@ Projeto desenvolvido em Python com integração ao banco de dados SQLite, com o 
 O sistema permite realizar as quatro operações principais de um CRUD:
 
 - **Create:** Cadastrar produtos com nome, quantidade e preço.
-- **Read:** Listar produtos cadastrados e consultar produtos pelo nome.
+- **Read:** Listar todos os produtos cadastrados.
 - **Update:** Atualizar nome, quantidade ou preço de um produto.
 - **Delete:** Excluir produtos cadastrados.
 
@@ -31,7 +31,7 @@ O projeto também conta com validações de entrada e verificações de existên
 
 1. Tenha o Python 3 instalado.
 2. Faça o download ou clone o repositório.
-3. Configure o banco de dados SQLite conforme o projeto.
+3. O banco de dados e a tabela de produtos são criados automaticamente na primeira execução.
 4. Abra o terminal na pasta do projeto.
 5. Execute o comando:
 

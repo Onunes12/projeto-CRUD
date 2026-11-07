@@ -14,12 +14,5 @@ PRECO REAL NOT NULL,
 QUANTIDADE INTEGER NOT NULL);''')
 
 
-conexao.execute( ''' INSERT INTO PRODUTOS (NOME, PRECO, QUANTIDADE)
-VALUES ('Camiseta', 29.90, 40),
-('Calça', 79.90, 20),
-('Tênis', 199.90, 15),
-('Jaqueta', 149.90, 10),
-('Meias', 9.90, 100);''')
-
 conexao.commit()
 conexao.close()
